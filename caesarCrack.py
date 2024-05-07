@@ -1,5 +1,6 @@
 import sys, string
 
+# English alphabet and letter frequencies
 alphabet = string.ascii_uppercase
 english_freqs = {
         'A': 8.4966, 'B': 2.0720, 'C': 4.5388, 'D': 3.3844,
@@ -12,6 +13,7 @@ english_freqs = {
     }
 eng_freq_list = list(english_freqs.values()) 
 
+# Function to get the frequency of each letter in the text (decrypted ciphertext)
 def get_freqs(text: str):
     freqs = [0]*26
     for c in text:
@@ -21,6 +23,7 @@ def get_freqs(text: str):
         freqs[i] = (freqs[i] / len(text)) * 100
     return freqs
 
+# Function that brute forces the decryption of the ciphertext
 def caesar(ciphertext: str) -> list:
     plaintexts = []
     for shift in range(26):
@@ -36,6 +39,7 @@ def caesar(ciphertext: str) -> list:
         plaintexts.append(plaintext)
     return plaintexts
 
+# Function that returns the most likely decryption based on the frequency of the letters (lower score = more likely english text)
 def get_likely_decrypt(decrypts: list) -> str:
     freqs = [get_freqs(decrypt) for decrypt in decrypts]
     scores = []
@@ -47,11 +51,13 @@ def get_likely_decrypt(decrypts: list) -> str:
     return decrypts[scores.index(min(scores))]
 
 def main(args):
+    if len(args) != 2:
+        print("Usage: python3 caesarCrack.py <ciphertext_file>")
+        sys.exit(1)
     with open(args[1], "r") as ciphertext_file:
         ciphertext = ciphertext_file.read()
         decrypts = caesar(ciphertext)
         print(get_likely_decrypt(decrypts))
 
-#Example usage
 if __name__=="__main__":
     main(sys.argv)
